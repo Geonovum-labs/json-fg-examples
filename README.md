@@ -6,7 +6,7 @@ Will also add a simple Node.js API (express) to show how to serve json data.
 Will add an example of a GDAL command to save your data as json-fg.
 Just the commandline command (gdal >3.8)
 
-# More info on JSON-FG
+## More info on JSON-FG
 
 The current Geonovum test repo for JSON-FG examples  
 https://github.com/Geonovum-labs/test-ogc-json-fg
@@ -23,7 +23,7 @@ https://www.geonovum.nl/uploads/documents/220405-JSON-FG.pdf
 GDAL JSON-FG docs  
 https://gdal.org/drivers/vector/jsonfg.html
 
-# method
+## method
 
 Based on this OpenLayers example  
 https://openlayers.org/en/latest/examples/accessible.html
@@ -38,10 +38,19 @@ However I cut off most municipalities to have a small filesize.
 Openlayers filter features by date example  
 https://openlayers.org/en/latest/examples/filter-points-webgl.html
 
-Still need to take inspiration from:  
-https://epsg.io/28992  
-https://openlayers.org/en/latest/examples/popup.html  
-https://openlayersbook.github.io/index.html  
-https://medium.com/@predragdavidovic10  
-native-dual-range-slider-html-css-javascript-91e778134816  
+## TODO
+
+Finish filtering of features based on timeslider
+Revert timeslider to native elements
+Add example of generating json-fg with GDAL
 Try background map from PDOK
+Show how to use https://epsg.io/28992  
+Explain how i used:
+
+- https://openlayers.org/en/latest/examples/popup.html
+- https://openlayersbook.github.io/index.html
+- https://medium.com/@predragdavidovic10/native-dual-range-slider-html-css-javascript-91e778134816
+
+Add text area for json-fg
+Add text area for coordinate transformation string to go with the json-fg
+Add a linter on the text area for json-fg

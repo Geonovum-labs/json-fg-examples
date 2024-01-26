@@ -7,7 +7,7 @@ import {
 
 // The json data wasn't in RD New, even though its metadata says so.
 AddRDNewTransformation();
-const map = InitializeMap("map-root");
+globalThis.map = InitializeMap("map-root");
 AddPopupToLayer(map);
 
 async function addJsonFeatures() {

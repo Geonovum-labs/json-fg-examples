@@ -17,7 +17,6 @@
     <link rel="stylesheet" href="index.css" />
     <link rel="stylesheet" href="slider.css" />
     <script type="module" src="index.js"></script>
-    <script src="scripts/date-range-functionality.js" defer></script>
 
     <style>
       .map-root {
@@ -42,24 +41,23 @@
       Thus we'll use css to merge two sliders and visualize them as one element.
       Will use https://medium.com/@predragdavidovic10/native-dual-range-slider-html-css-javascript-91e778134816
     -->
-    <!-- ol-unselectable ol-control -->
-    <div class="date-range-container">
-      <div class="form_control">
-        <div class="form_control_container">
-          <div class="form_control_container__time">Min</div>
+    <div class="date-range-container ol-unselectable ol-control">
+      <div class="number-input-container">
+        <div class="number-input-area left">
           <input
-            class="form_control_container__time__input"
+            class="number-input from"
             type="number"
             id="fromInput"
             value="1920"
             min="1900"
             max="2000"
           />
+          <span class="input-label from">Min</span>
         </div>
-        <div class="form_control_container">
-          <div class="form_control_container__time">Max</div>
+        <div class="number-input right">
+          <span class="input-label to">Max</span>
           <input
-            class="form_control_container__time__input"
+            class="number-input to"
             type="number"
             id="toInput"
             value="1960"

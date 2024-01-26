@@ -1,6 +1,65 @@
-function controlFromInput(fromSlider, fromInput, toInput, controlSlider) {
+/*
+  Based on this Medium article with small edits:
+  https://medium.com/@predragdavidovic10/native-dual-range-slider-html-css-javascript-91e778134816
+*/
+
+export function initializeSliderBehaviour({
+  sliderColor,
+  rangeColor,
+  onFromSliderChange,
+  onToSliderChange,
+}) {
+  const fromSlider = document.querySelector("#range-slider-min");
+  const toSlider = document.querySelector("#range-slider-max");
+  const fromInput = document.querySelector("#fromInput");
+  const toInput = document.querySelector("#toInput");
+  fillSlider(fromSlider, toSlider, sliderColor, rangeColor, toSlider);
+  setToggleAccessible(toSlider);
+
+  // Both sliders can move by moving the handle or by updating the number input.
+  fromSlider.oninput = () => {
+    controlFromSlider(fromSlider, toSlider, fromInput, sliderColor, rangeColor);
+    onFromSliderChange(fromInput.value);
+  };
+  fromInput.oninput = () => {
+    controlFromInput(
+      fromSlider,
+      fromInput,
+      toInput,
+      toSlider,
+      sliderColor,
+      rangeColor
+    );
+    onFromSliderChange(fromInput.value);
+  };
+
+  toSlider.oninput = () => {
+    controlToSlider(fromSlider, toSlider, toInput, sliderColor, rangeColor);
+    onToSliderChange(toInput.value);
+  };
+  toInput.oninput = () => {
+    controlToInput(
+      toSlider,
+      fromInput,
+      toInput,
+      toSlider,
+      sliderColor,
+      rangeColor
+    );
+    onToSliderChange(toInput.value);
+  };
+}
+
+function controlFromInput(
+  fromSlider,
+  fromInput,
+  toInput,
+  controlSlider,
+  sliderColor,
+  rangeColor
+) {
   const [from, to] = getParsed(fromInput, toInput);
-  fillSlider(fromInput, toInput, "#C6C6C6", "#25daa5", controlSlider);
+  fillSlider(fromInput, toInput, sliderColor, rangeColor, controlSlider);
   if (from > to) {
     fromSlider.value = to;
     fromInput.value = to;
@@ -9,9 +68,16 @@ function controlFromInput(fromSlider, fromInput, toInput, controlSlider) {
   }
 }
 
-function controlToInput(toSlider, fromInput, toInput, controlSlider) {
+function controlToInput(
+  toSlider,
+  fromInput,
+  toInput,
+  controlSlider,
+  sliderColor,
+  rangeColor
+) {
   const [from, to] = getParsed(fromInput, toInput);
-  fillSlider(fromInput, toInput, "#C6C6C6", "#25daa5", controlSlider);
+  fillSlider(fromInput, toInput, sliderColor, rangeColor, controlSlider);
   setToggleAccessible(toInput);
   if (from <= to) {
     toSlider.value = to;
@@ -21,9 +87,15 @@ function controlToInput(toSlider, fromInput, toInput, controlSlider) {
   }
 }
 
-function controlFromSlider(fromSlider, toSlider, fromInput) {
+function controlFromSlider(
+  fromSlider,
+  toSlider,
+  fromInput,
+  sliderColor,
+  rangeColor
+) {
   const [from, to] = getParsed(fromSlider, toSlider);
-  fillSlider(fromSlider, toSlider, "#C6C6C6", "#25daa5", toSlider);
+  fillSlider(fromSlider, toSlider, sliderColor, rangeColor, toSlider);
   if (from > to) {
     fromSlider.value = to;
     fromInput.value = to;
@@ -32,9 +104,15 @@ function controlFromSlider(fromSlider, toSlider, fromInput) {
   }
 }
 
-function controlToSlider(fromSlider, toSlider, toInput) {
+function controlToSlider(
+  fromSlider,
+  toSlider,
+  toInput,
+  sliderColor,
+  rangeColor
+) {
   const [from, to] = getParsed(fromSlider, toSlider);
-  fillSlider(fromSlider, toSlider, "#C6C6C6", "#25daa5", toSlider);
+  fillSlider(fromSlider, toSlider, sliderColor, rangeColor, toSlider);
   setToggleAccessible(toSlider);
   if (from <= to) {
     toSlider.value = to;
@@ -73,16 +151,3 @@ function setToggleAccessible(currentTarget) {
     toSlider.style.zIndex = 0;
   }
 }
-
-const fromSlider = document.querySelector("#range-slider-min");
-const toSlider = document.querySelector("#range-slider-max");
-const fromInput = document.querySelector("#fromInput");
-const toInput = document.querySelector("#toInput");
-fillSlider(fromSlider, toSlider, "#C6C6C6", "#25daa5", toSlider);
-setToggleAccessible(toSlider);
-
-fromSlider.oninput = () => controlFromSlider(fromSlider, toSlider, fromInput);
-toSlider.oninput = () => controlToSlider(fromSlider, toSlider, toInput);
-fromInput.oninput = () =>
-  controlFromInput(fromSlider, fromInput, toInput, toSlider);
-toInput.oninput = () => controlToInput(toSlider, fromInput, toInput, toSlider);

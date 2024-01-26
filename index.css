@@ -8,18 +8,12 @@
 
 .date-range-container {
   /* Own style to anchor the date slider against the bottom center of screen. */
-  /*
-    bottom: 0.5em;
-    max-width: fit-content;
-  */
   position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  margin: 5px;
-
-  /* Style from the Medium article */
   display: flex;
   flex-direction: column;
-  width: 80%;
-  /* margin: 35% auto; */
+  bottom: 0px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 5px;
+  width: 60%;
 }

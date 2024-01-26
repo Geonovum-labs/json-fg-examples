@@ -22,7 +22,7 @@ export function InitializeMap(targetDivId) {
       center: [0, 0],
       zoom: 2,
     }),
-    // controls: ol.control.defaults.defaults().extend([new DateRangeControl()]),
+    controls: ol.control.defaults.defaults().extend([new DateRangeControl()]),
   });
 
   // Add the example map to the global scope for debugging from the browser.
