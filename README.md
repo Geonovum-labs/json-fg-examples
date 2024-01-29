@@ -6,6 +6,11 @@ Will also add a simple Node.js API (express) to show how to serve json data.
 Will add an example of a GDAL command to save your data as json-fg.
 Just the commandline command (gdal >3.8)
 
+The example website uses a custom openlayers Format for JSON-FG to read the features.
+It is a simple extension of the format from GeoJSON.js.  
+Some info on how to create a custom ol.Format:  
+https://github.com/openlayers/openlayers/tree/main/src/ol/format
+
 ## More info on JSON-FG
 
 The current Geonovum test repo for JSON-FG examples  

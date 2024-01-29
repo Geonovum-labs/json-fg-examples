@@ -23,11 +23,11 @@ export class DateRangeControl extends ol.control.Control {
   }
 
   onFromSliderChange(newValue) {
-    console.log("From slider updated: " + newValue);
+    // console.log("From slider updated: " + newValue);
   }
 
   onToSliderChange(newValue) {
-    console.log("To slider updated: " + newValue);
+    // console.log("To slider updated: " + newValue);
   }
 
   // handleRotateNorth() {

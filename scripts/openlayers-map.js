@@ -6,15 +6,17 @@
 // import View from "ol/View.js";
 // import {defaults as defaultControls} from 'ol/control.js';
 import { DateRangeControl } from "./date-range-control.js";
+import { JsonFG } from "./json-fg-format.js";
 
 /** Copy-pasta from OL example. */
 export function InitializeMap(targetDivId) {
+  const baseLayer = new ol.layer.Tile({
+    source: new ol.source.OSM(),
+  });
+  baseLayer.set("name", "basemap");
+
   const map = new ol.Map({
-    layers: [
-      new ol.layer.Tile({
-        source: new ol.source.OSM(),
-      }),
-    ],
+    layers: [baseLayer],
     target: targetDivId,
     view: new ol.View({
       // EPSG:3857 (Web Mercator) is the default View projection. (fastest in browsers for world-wide data, not precise)
@@ -74,17 +76,15 @@ function styleFunction(feature) {
  * @param {ArrayBuffer | Document | Element | Object | string} geojsonSource Can be many types of input data. Easiest is to provide as json string.
  */
 export function addFeaturesToMapFromGeoJSON(map, geojsonSource) {
-  // JSON-FG is a superset of geojson
-  // However the geojson format doesn't support reading from anything other than EPSG:4326
-  // Any projections given to the format are ignored.
-  // https://gis.stackexchange.com/questions/442177/include-crs-information-in-geojson-features-created-by-openlayers-geojson-forma
-  const geojson = new ol.format.GeoJSON();
+  // JSON-FG as a filetype is not known by OpenLayers, so we use a custom format.
+  // Otherwise it would have used: new ol.format.GeoJSON()
+  const jsonfgFormat = new JsonFG();
 
   // Thus the projection needs to be done server side to 4326 or with custom code like in this example.
   // Server-side is usually better for production, however there can be plenty reasons to do it client-side.
   // And then it's easiest when reading features, since their sources could have different coordinate systems.
   // Docs for GeoJSON readFeatures: https://openlayers.org/en/latest/apidoc/module-ol_format_GeoJSON-GeoJSON.html
-  const features = geojson.readFeatures(geojsonSource, {
+  const features = jsonfgFormat.readFeatures(geojsonSource, {
     dataProjection: "EPSG:4326",
     featureProjection: map.getView().getProjection(),
   });
@@ -103,12 +103,8 @@ export function addFeaturesToMapFromGeoJSON(map, geojsonSource) {
     style: styleFunction,
   });
 
+  vectorLayer.set("name", "vector layer");
   map.addLayer(vectorLayer);
-
-  // Add vector layer to global scope to debug from browser console.
-  // Add features to global scope to debug from browser console.
-  window.vectorFeatures = features;
-  window.vectorLayer = vectorLayer;
 
   // Make features tab selectable
   // Not relevant for json-fg, just something I wanted to try.
@@ -153,16 +149,26 @@ export function AddPopupToLayer(map) {
   map.addOverlay(popupOverlay);
 
   map.on("click", function (e) {
-    popupOverlay.setPosition(e.coordinate);
-
     const features = [];
-    let lastFeatureProps = { naam: "Nothing here." };
     map.forEachFeatureAtPixel(e.pixel, function (feature, layer) {
       features.push(feature);
-      lastFeatureProps = feature.getProperties();
     });
 
-    popupEle.innerText = lastFeatureProps.naam;
+    const feature = features[features.length - 1];
+    if (!feature) {
+      popupOverlay.setPosition(undefined);
+      return;
+    }
+
+    console.log("Clicked on feature:");
+    console.log(feature);
+
+    const featureProps = feature.getProperties();
+    console.log("Feature properties: (note: json-fg time is not a property)");
+    console.log(featureProps);
+
+    popupEle.innerText = featureProps.naam;
+    popupOverlay.setPosition(e.coordinate);
   });
 }
 
