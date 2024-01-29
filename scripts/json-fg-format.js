@@ -17,7 +17,15 @@ export class JsonFG extends ol.format.GeoJSON {
     // The GeoJSON format would ignore those properties.
 
     const feature = super.readFeatureFromObject(object, options);
-    feature.set("time", object.time);
+
+    const featureTime = object.time;
+    if (featureTime.interval[0] === "..") {
+      featureTime.interval[0] = undefined;
+    }
+    if (featureTime.interval[1] === "..") {
+      featureTime.interval[1] = undefined;
+    }
+    feature.set("time", featureTime);
     feature.set("place", object.place);
     return feature;
   }

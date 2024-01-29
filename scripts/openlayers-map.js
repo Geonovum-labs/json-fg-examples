@@ -5,8 +5,9 @@
 // import TileLayer from "ol/layer/Tile.js";
 // import View from "ol/View.js";
 // import {defaults as defaultControls} from 'ol/control.js';
-import { DateRangeControl } from "./date-range-control.js";
+import { getWithinRangeStylefunction } from "./date-range-control.js";
 import { JsonFG } from "./json-fg-format.js";
+import { getPolygonStyle } from "./openlayers-styles.js";
 
 /** Copy-pasta from OL example. */
 export function InitializeMap(targetDivId) {
@@ -24,7 +25,7 @@ export function InitializeMap(targetDivId) {
       center: [0, 0],
       zoom: 2,
     }),
-    controls: ol.control.defaults.defaults().extend([new DateRangeControl()]),
+    controls: ol.control.defaults.defaults(),
   });
 
   // Add the example map to the global scope for debugging from the browser.
@@ -66,11 +67,6 @@ export function AddRDNewTransformation() {
   ol.proj.proj4.register(proj4);
 }
 
-/** Copy-pasta from OL example. */
-function styleFunction(feature) {
-  return styles[feature.getGeometry().getType()];
-}
-
 /**
  * @param {ol.Map} map
  * @param {ArrayBuffer | Document | Element | Object | string} geojsonSource Can be many types of input data. Easiest is to provide as json string.
@@ -100,16 +96,19 @@ export function addFeaturesToMapFromGeoJSON(map, geojsonSource) {
 
   const vectorLayer = new ol.layer.Vector({
     source: vectorSource,
-    style: styleFunction,
+    style: getWithinRangeStylefunction(
+      new Date("1900-01-01"),
+      new Date("2100-01-01")
+    ),
   });
 
-  vectorLayer.set("name", "vector layer");
+  vectorLayer.set("name", "json-fg layer");
   map.addLayer(vectorLayer);
 
   // Make features tab selectable
   // Not relevant for json-fg, just something I wanted to try.
   // const selectInteraction = new ol.interaction.Select({
-  //   style: magentaFeaturesStyle,
+  //   style: getPolygonStyle("magenta", "rgba(255, 0, 255, 0.1)"),
   // });
   // map.addInteraction(selectInteraction);
   // for (let i = 0; i < features.length; i++) {
@@ -153,6 +152,9 @@ export function AddPopupToLayer(map) {
     map.forEachFeatureAtPixel(e.pixel, function (feature, layer) {
       features.push(feature);
     });
+    const municipalities = features.map((f) => {
+      return { name: f.get("naam"), from: f.get("begingeldigheid") };
+    });
 
     const feature = features[features.length - 1];
     if (!feature) {
@@ -160,109 +162,15 @@ export function AddPopupToLayer(map) {
       return;
     }
 
-    console.log("Clicked on feature:");
-    console.log(feature);
-
     const featureProps = feature.getProperties();
-    console.log("Feature properties: (note: json-fg time is not a property)");
+    console.log(
+      "Props of clicked feature: (note: json-fg time is not a property)"
+    );
     console.log(featureProps);
 
-    popupEle.innerText = featureProps.naam;
+    popupEle.innerText = municipalities
+      .map((mun) => `Gemeente: ${mun.name} - sinds ${mun.from}`)
+      .join("\n");
     popupOverlay.setPosition(e.coordinate);
   });
 }
-
-const pointStyle = new ol.style.Style({
-  image: new ol.style.Circle({
-    radius: 5,
-    fill: null,
-    stroke: new ol.style.Stroke({ color: "red", width: 1 }),
-  }),
-});
-const greenStrokeStyle = new ol.style.Style({
-  stroke: new ol.style.Stroke({
-    color: "green",
-    width: 1,
-  }),
-});
-const yellowFillStyle = new ol.style.Style({
-  stroke: new ol.style.Stroke({
-    color: "yellow",
-    lineDash: [4],
-    width: 1,
-  }),
-  fill: new ol.style.Fill({
-    color: "rgba(255, 255, 0, 0.1)",
-  }),
-});
-const blueFillStyle = new ol.style.Style({
-  stroke: new ol.style.Stroke({
-    color: "blue",
-    width: 3,
-  }),
-  fill: new ol.style.Fill({
-    color: "rgba(0, 0, 255, 0.1)",
-  }),
-});
-const magentaFeaturesStyle = new ol.style.Style({
-  stroke: new ol.style.Stroke({
-    color: "magenta",
-    width: 2,
-  }),
-  fill: new ol.style.Fill({
-    color: "magenta",
-  }),
-  image: new ol.style.Circle({
-    radius: 10,
-    fill: null,
-    stroke: new ol.style.Stroke({
-      color: "magenta",
-    }),
-  }),
-});
-const redFillStyle = new ol.style.Style({
-  stroke: new ol.style.Stroke({
-    color: "red",
-    width: 2,
-  }),
-  fill: new ol.style.Fill({
-    color: "rgba(255,0,0,0.2)",
-  }),
-});
-
-// This is not a style like the ones above
-// This comes from a WebGL filtered layer example
-// https://openlayers.org/en/latest/examples/filter-points-webgl.html
-// const blueFillStyleWithFilter = {
-//   variables: {
-//     minYear: 1850,
-//     maxYear: 2015,
-//   },
-//   filter: ['between', ['get', 'year'], ['var', 'minYear'], ['var', 'maxYear']],
-//   'circle-radius': [
-//     '*',
-//     ['interpolate', ['linear'], ['get', 'mass'], 0, 4, 200000, 13],
-//     ['-', 1.75, ['*', animRatio, 0.75]],
-//   ],
-//   'circle-fill-color': [
-//     'interpolate',
-//     ['linear'],
-//     animRatio,
-//     0,
-//     newColor,
-//     1,
-//     oldColor,
-//   ],
-//   'circle-opacity': ['-', 1.0, ['*', animRatio, 0.75]],
-// };
-
-const styles = {
-  Point: pointStyle,
-  LineString: greenStrokeStyle,
-  MultiLineString: greenStrokeStyle,
-  MultiPoint: pointStyle,
-  MultiPolygon: yellowFillStyle,
-  Polygon: blueFillStyle,
-  GeometryCollection: magentaFeaturesStyle,
-  Circle: redFillStyle,
-};

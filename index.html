@@ -30,7 +30,10 @@
   </head>
   <body>
     <h1>Openlayers json-fg example</h1>
-    <p>Example of how json-fg data can be shown in an Openlayers map.</p>
+    <p>
+      This is an example of how json-fg data can be shown in an Openlayers map.
+    </p>
+    <p>It shows the shape of Dutch municipality borders over time.</p>
 
     <div id="map-root" class="map-root" tabindex="0">
       <div id="selectable-features"></div>
@@ -39,51 +42,52 @@
     <!--
       There is no native html5 element for a range picker with two handles.
       Thus we'll use css to merge two sliders and visualize them as one element.
-      Will use https://medium.com/@predragdavidovic10/native-dual-range-slider-html-css-javascript-91e778134816
+      See ./scripts/date-range-functionality.js for some documentation.
     -->
     <div class="date-range-container ol-unselectable ol-control">
       <div class="number-input-container">
         <div class="number-input-area left">
           <input
+            id="date-range-from-input"
             class="number-input from"
-            type="number"
-            id="fromInput"
-            value="1920"
-            min="1900"
-            max="2000"
+            type="date"
+            value="2003-01-01"
+            min="2003-01-01"
+            max="2020-01-01"
           />
-          <span class="input-label from">Min</span>
+          <span class="input-label from">From date</span>
         </div>
         <div class="number-input right">
-          <span class="input-label to">Max</span>
+          <span class="input-label to">To date</span>
           <input
+            id="date-range-to-input"
             class="number-input to"
-            type="number"
-            id="toInput"
-            value="1960"
-            min="1900"
-            max="2000"
+            type="date"
+            value="2004-01-01"
+            min="2003-01-01"
+            max="2020-01-01"
           />
         </div>
       </div>
+      <!-- 0 - 1 representing a range from the from date to the to date. -->
       <div id="date-range-control" class="date-range-control">
         <input
           type="range"
           name="range-slider-min"
           id="range-slider-min"
           class="range-slider-min"
-          value="1920"
-          min="1900"
-          max="2000"
+          step="0.005"
+          min="0"
+          max="1"
         />
         <input
           type="range"
           name="range-slider-max"
           id="range-slider-max"
           class="range-slider-max"
-          value="1960"
-          min="1900"
-          max="2000"
+          step="0.005"
+          min="0"
+          max="1"
         />
       </div>
     </div>

@@ -1,10 +1,7 @@
 Example website that shows how to use JSON-FG in a web map with time and CRS support
 
-Will use a vanilla javascript for the website. This makes it easier for beginner programmers to get it running. Maybe i'll add an identical example to show how to do the same with a bundler.
-Will also add a simple Node.js API (express) to show how to serve json data.
-
-Will add an example of a GDAL command to save your data as json-fg.
-Just the commandline command (gdal >3.8)
+The website uses vanilla javascript, without a compilation step.
+This makes it easier for beginner programmers to get it running.
 
 The example website uses a custom openlayers Format for JSON-FG to read the features.
 It is a simple extension of the format from GeoJSON.js.  
@@ -45,17 +42,22 @@ https://openlayers.org/en/latest/examples/filter-points-webgl.html
 
 ## TODO
 
-Finish filtering of features based on timeslider
+GitHub naar Geonovum gh pushen
 Revert timeslider to native elements
-Add example of generating json-fg with GDAL
+Add an example of generating json-fg with GDAL. Just the commandline command (gdal >3.8)
 Try background map from PDOK
-Show how to use https://epsg.io/28992  
+
+From here it may take longer than the available time:
+Add text area for json-fg
+Show how to use https://epsg.io/28992
+Add text area for coordinate transformation string to go with the json-fg
+Add a linter on the text area for json-fg (stretch goal)
+Check if the files work in codepen.
+Add an identical example but with a bundler.
+Add example of a simple Node.js API (express) to show how to serve json data.
+
 Explain how i used:
 
 - https://openlayers.org/en/latest/examples/popup.html
 - https://openlayersbook.github.io/index.html
 - https://medium.com/@predragdavidovic10/native-dual-range-slider-html-css-javascript-91e778134816
-
-Add text area for json-fg
-Add text area for coordinate transformation string to go with the json-fg
-Add a linter on the text area for json-fg
