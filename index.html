@@ -7,12 +7,28 @@
     <!-- Use OpenLayers without downloading anything (not recommended for production) -->
     <!-- The recommended way is to use a package bundler like webpack or vite. -->
     <script src="https://cdn.jsdelivr.net/npm/ol@v8.2.0/dist/ol.js"></script>
-    <!-- Same for Proj4.js for transformations. -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.10.0/proj4.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.js"></script>
+
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/ol@v8.2.0/ol.css"
     />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css"
+      integrity="sha512-uf06llspW44/LZpHzHT6qBOIVODjWtv4MxCricRxkzvopAlSWnTf6hpZTFxuuZcuNE9CBQhqE0Seu1CoRk84nQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/theme/ayu-mirage.min.css"
+    />
+
+    <!-- javascript and json linting -->
+    <!-- https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/lint/javascript-lint.min.js -->
+    <!-- https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/lint/json-lint.min.js -->
 
     <link rel="stylesheet" href="index.css" />
     <link rel="stylesheet" href="slider.css" />
@@ -29,14 +45,99 @@
     </style>
   </head>
   <body>
-    <h1>Openlayers json-fg example</h1>
-    <p>
-      This is an example of how json-fg data can be shown in an Openlayers map.
-    </p>
-    <p>It shows the shape of Dutch municipality borders over time.</p>
-
     <div id="map-root" class="map-root" tabindex="0">
+      <div class="title-container">Openlayers json-fg example</div>
       <div id="selectable-features"></div>
+    </div>
+
+    <div class="editor-view">
+      <div class="editor-pane">
+        <p class="subtitle">Introduction</p>
+        <p>
+          This is an example of how json-fg data can be shown in an Openlayers
+          map. It shows the shape of Dutch municipality borders over time.
+        </p>
+        <p>
+          Repository:<br />
+          <a href="https://github.com/Geonovum/json-fg-examples" target="_blank"
+            >github.com/Geonovum/json-fg-examples</a
+          >
+        </p>
+        <p>
+          JSON-FG extends GeoJSON with support for other coordinate systems than
+          WGS84 and adds support for time.
+        </p>
+        <p>
+          GDAL docs on the JSON-FG standard:
+          <a href="https://gdal.org/drivers/vector/jsonfg.html" target="_blank"
+            >https://gdal.org/drivers/vector/jsonfg.html</a
+          >.
+        </p>
+        <p>
+          Run the following gdal command to convert your gml to json-fg. This
+          requires gdal >3.8
+        </p>
+        <code>
+          ogr2ogr -f "JSONFG" /vsistdout/
+          "https://geonovum.github.io/test-ogc-json-fg/testdata/bgt/citygml/bgt_kunstwerkdeel.gml"
+          > bgt_kunstwerkdeel.jsonfg
+        </code>
+      </div>
+
+      <div class="editor-pane">
+        <p class="subtitle">JSON-FG editor</p>
+        <p>Edit your json-fg here</p>
+
+        <div id="jsonfg-editor" class="editor"></div>
+      </div>
+
+      <div class="editor-pane">
+        <p class="subtitle">Transformation editor</p>
+        <p>
+          Add the transformation string for the coordinate system of your json.
+        </p>
+        <p>
+          <label for="epsg_input">EPSG code:</label>
+          <input
+            type="text"
+            id="epsg_input"
+            name="epsg_input"
+            pattern="EPSG:[0-9]{3,5}"
+            value="EPSG:28992"
+          />
+        </p>
+
+        <div id="crs-editor" class="editor" style="height: 3em"></div>
+
+        <p>
+          You can find these here:
+          <a href="https://epsg.io" target="_blank">epsg.io</a>
+        </p>
+        <p>
+          By default openlayers knows how to convert coordinates between:
+          EPSG:4326 (WGS84) and EPSG:3857 (Web Mercator). More info:
+          <a
+            href="https://openlayers.org/en/latest/apidoc/module-ol_proj_Projection-Projection.html"
+            target="_blank"
+            >ol.proj.Projection</a
+          >.
+        </p>
+        <p>
+          More specifically, OpenLayers uses the Proj4.js library to do the
+          transformations. For all other coordinate systems proj4 will need a
+          transformation string. These are maintained by the EPSG. They have a
+          page per coordinate system with details and more relevant for us, the
+          transformation strings.
+        </p>
+        <p>The tranformation is added like this:</p>
+        <code
+          >proj4.defs("EPSG:28992", "+proj=sterea +lat_0=52.1561605555556
+          +lon_0=5.38763888888889 +k=0.9999079 +x_0=155000 +y_0=463000
+          +ellps=bessel
+          +towgs84=565.4171,50.3319,465.5524,1.9342,-1.6677,9.1019,4.0725
+          +units=m +no_defs +type=crs");</code
+        >
+      </div>
     </div>
 
     <!--

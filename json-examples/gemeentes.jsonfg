@@ -4,7 +4,7 @@
     "[ogc-json-fg-1-0.1:core]"
   ],
   "featureType": "sql_statement",
-  "coordRefSys": "[EPSG:4326]",
+  "coordRefSys": "[EPSG:28992]",
   "features": [
     {
       "type": "Feature",

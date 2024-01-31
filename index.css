@@ -1,3 +1,41 @@
+/* Anchor the title against the top center of the map. */
+.title-container {
+  position: absolute;
+
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 5px;
+
+  font-family: "arial", "trebuchet ms", sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: white;
+
+  /* To make the title readable on top of the Map: */
+  z-index: 2;
+  text-shadow: 0.1em 0 rgb(26, 26, 26), 0 0.1em rgb(26, 26, 26),
+    -0.1em 0 rgb(26, 26, 26), 0 -0.1em rgb(26, 26, 26);
+}
+
+p {
+  font-family: "arial", sans-serif;
+  font-size: 1em;
+  line-height: 1.4;
+}
+
+.subtitle {
+  font-family: "arial", sans-serif;
+  font-size: 1.5em;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+input:invalid {
+  border: none;
+  outline: 2px solid red;
+  border-radius: 5px;
+}
+
 /* A simple style for the selected feature popup. */
 .popup {
   border-radius: 5px;
@@ -6,8 +44,8 @@
   padding: 2px;
 }
 
+/* Anchor the date slider against the bottom center of screen. */
 .date-range-container {
-  /* Own style to anchor the date slider against the bottom center of screen. */
   position: absolute;
   display: flex;
   flex-direction: column;
@@ -16,4 +54,24 @@
   transform: translateX(-50%);
   padding: 5px;
   width: 60%;
+}
+
+.editor-view {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.editor-pane {
+  flex: 1 1 0px;
+  padding: 5px;
+  width: 0;
+  min-width: 400px;
+}
+
+.editor {
+  resize: vertical;
+  overflow: auto;
+
+  min-height: 3em;
 }

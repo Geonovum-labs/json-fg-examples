@@ -42,22 +42,9 @@ https://openlayers.org/en/latest/examples/filter-points-webgl.html
 
 ## TODO
 
-GitHub naar Geonovum gh pushen
-Revert timeslider to native elements
-Add an example of generating json-fg with GDAL. Just the commandline command (gdal >3.8)
-Try background map from PDOK
+Explain how i modified timeslider (original is copyrighted):
+https://medium.com/@predragdavidovic10/native-dual-range-slider-html-css-javascript-91e778134816
 
-From here it may take longer than the available time:
-Add text area for json-fg
-Show how to use https://epsg.io/28992
-Add text area for coordinate transformation string to go with the json-fg
-Add a linter on the text area for json-fg (stretch goal)
 Check if the files work in codepen.
 Add an identical example but with a bundler.
 Add example of a simple Node.js API (express) to show how to serve json data.
-
-Explain how i used:
-
-- https://openlayers.org/en/latest/examples/popup.html
-- https://openlayersbook.github.io/index.html
-- https://medium.com/@predragdavidovic10/native-dual-range-slider-html-css-javascript-91e778134816
