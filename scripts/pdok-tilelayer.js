@@ -1,7 +1,7 @@
 // PDOK - BRT background tile layers:
 // https://www.pdok.nl/introductie/-/article/basisregistratie-topografie-achtergrondkaarten-brt-a-
 
-import { addRDNewTransformation } from "./openlayers-proj4.js";
+import { addOpenLayersTransformation } from "./openlayers-proj4.js";
 
 // Basisregistratie Topografie (BRT) - Grijs
 // URL https://service.pdok.nl//brt/achtergrondkaart/wmts/v2_0?request=GetCapabilities&service=WMTS
@@ -16,9 +16,15 @@ export async function addPDOKTileLayer(map) {
     "https://service.pdok.nl/brt/achtergrondkaart/wmts/v2_0?request=GetCapabilities&service=WMTS";
   const wmtsLayerId = "grijs";
 
+  // Define the transformation of the Dutch EPSG:28992 system.
+  // Source: https://epsg.io/28992
+  // IIRC you can make this Dutch RD New system more precise (like 10 meters) by loading a grid of deviations from this approximation.
   let projection = ol.proj.get("EPSG:28992");
   if (!projection) {
-    addRDNewTransformation();
+    addOpenLayersTransformation(
+      "EPSG:28992",
+      "+proj=sterea +lat_0=52.15616055555555 +lon_0=5.38763888888889 +k=0.9999079 +x_0=155000 +y_0=463000 +ellps=bessel +towgs84=565.417,50.3319,465.552,-0.398957,0.343988,-1.8774,4.0725 +units=m +no_defs"
+    );
     projection = ol.proj.get("EPSG:28992");
     if (!projection) {
       console.error(

@@ -19,8 +19,10 @@
 
 .input-label {
   font-family: "Chivo", sans-serif;
-  color: #5f5757;
   font-weight: bold;
+  color: #5f5757;
+  text-shadow: 0.1em 0 rgb(239, 239, 239), 0 0.1em rgb(239, 239, 239),
+    -0.1em 0 rgb(239, 239, 239), 0 -0.1em rgb(239, 239, 239);
 
   &.from {
     text-align: left;
@@ -43,7 +45,6 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 input[type="range"]::-moz-range-thumb {
-  -webkit-appearance: none;
   pointer-events: all;
   width: 24px;
   height: 24px;

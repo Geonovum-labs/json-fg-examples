@@ -4,33 +4,17 @@
 // For this example I was already showing how to use OpenLayers without bundler.
 // Thus we import codemirror.min.js in index.html and use the window.CodeMirror constructor.
 
-export async function initializeEditors(
-  jsonfgText,
-  crsText,
-  onJsonChange,
-  onCrsChange
-) {
-  const jsonfgEditor = CodeMirror(document.getElementById("jsonfg-editor"), {
+export function createEditor(element, text, onChange) {
+  const editor = CodeMirror(element, {
     tabSize: 2,
-    value: jsonfgText,
+    value: text,
     extraKeys: { Tab: false, "Shift-Tab": false },
     mode: "text",
     theme: "ayu-mirage",
     lineNumbers: true,
   });
 
-  const crsEditor = CodeMirror(document.getElementById("crs-editor"), {
-    tabSize: 2,
-    value: crsText,
-    extraKeys: { Tab: false },
-    mode: "text",
-    theme: "ayu-mirage",
-    lineNumbers: true,
-  });
+  editor.on("change", onChange);
 
-  jsonfgEditor.on("change", onJsonChange);
-  crsEditor.on("change", onCrsChange);
-
-  window.jsonfgEditor = jsonfgEditor;
-  window.crsEditor = crsEditor;
+  return editor;
 }

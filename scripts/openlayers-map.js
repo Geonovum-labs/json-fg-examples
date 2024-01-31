@@ -5,7 +5,6 @@
 // import TileLayer from "ol/layer/Tile.js";
 // import View from "ol/View.js";
 // import {defaults as defaultControls} from 'ol/control.js';
-import { getWithinRangeStylefunction } from "./date-range-control.js";
 import { JsonFG } from "./json-fg-format.js";
 import { getPolygonStyle } from "./openlayers-styles.js";
 
@@ -30,10 +29,7 @@ export function initializeMap(targetDivId) {
  * @param {string} coordinateSystemCode default: "EPSG:4326"
  * @returns {ol.source.Vector} vectorSource
  */
-export function readJsonFGFeatures(
-  jsonSource,
-  coordinateSystemCode = "EPSG:4326"
-) {
+export function readJsonFGFeatures(jsonSource) {
   // JSON-FG as a filetype is not known by OpenLayers, so we use a custom format.
   // Otherwise it would have used: new ol.format.GeoJSON()
   const jsonfgFormat = new JsonFG();
@@ -43,7 +39,9 @@ export function readJsonFGFeatures(
   // And then it's easiest when reading features, since their sources could have different coordinate systems.
   // Docs for GeoJSON readFeatures: https://openlayers.org/en/latest/apidoc/module-ol_format_GeoJSON-GeoJSON.html
   const features = jsonfgFormat.readFeatures(jsonSource, {
-    dataProjection: coordinateSystemCode,
+    // Will make sure to make these two options unnessary.
+    // For that the format needs to read the projection from JSON.
+    // dataProjection: "EPSG:4326",
     featureProjection: map.getView().getProjection(),
   });
 
@@ -55,24 +53,12 @@ export function readJsonFGFeatures(
 
 /**
  * @param {ol.Map} map
- * @param {ArrayBuffer | Document | Element | Object | string} jsonSource Can be many types of input data. Easiest is to provide as json string.
- * @param {string} coordinateSystemCode default: "EPSG:4326"
  */
-export function addJsonFGAsVectorLayer(
-  map,
-  layername,
-  jsonSource,
-  coordinateSystemCode = "EPSG:4326"
-) {
-  const vectorSource = readJsonFGFeatures(jsonSource, coordinateSystemCode);
-
-  const vectorLayer = new ol.layer.Vector({
-    source: vectorSource,
-    style: getWithinRangeStylefunction(
-      new Date("1900-01-01"),
-      new Date("2100-01-01")
-    ),
-  });
+export function addEmptyVectorLayer(map, layername) {
+  // Move this documentation of properties that moved:
+  //{ArrayBuffer | Document | Element | Object | string} jsonSource Can be many types of input data. Easiest is to provide as json string.
+  //{string} coordinateSystemCode default: "EPSG:4326"
+  const vectorLayer = new ol.layer.Vector();
 
   vectorLayer.set("name", layername);
   map.addLayer(vectorLayer);

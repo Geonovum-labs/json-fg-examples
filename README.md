@@ -45,6 +45,8 @@ https://openlayers.org/en/latest/examples/filter-points-webgl.html
 Explain how i modified timeslider (original is copyrighted):
 https://medium.com/@predragdavidovic10/native-dual-range-slider-html-css-javascript-91e778134816
 
-Check if the files work in codepen.
-Add an identical example but with a bundler.
-Add example of a simple Node.js API (express) to show how to serve json data.
+Recommend using "" instead of "..". Because ".." is not falsy.
+Show conflict with GeoJSON format on hardcoded geometry column.
+
+Test whether the property feature.place is now correctly used instead of feature.geometry
+Organize the different map functionality a little better

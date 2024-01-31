@@ -1,20 +1,17 @@
 import {
   initializeMap,
-  addJsonFGAsVectorLayer,
+  addEmptyVectorLayer,
   addPopupToLayer,
   zoomToLayer,
   readJsonFGFeatures,
 } from "./scripts/openlayers-map.js";
-import { DateRangeControl } from "./scripts/date-range-control.js";
-import { initializeEditors } from "./scripts/code-editor/codemirror.js";
+import {
+  DateRangeControl,
+  getWithinRangeStylefunction,
+} from "./scripts/date-range-control.js";
+import { createEditor } from "./scripts/code-editor/codemirror.js";
 import { addPDOKTileLayer } from "./scripts/pdok-tilelayer.js";
-import { addOSMTileLayer } from "./scripts/osm-tilelayer.js";
 import { addOpenLayersTransformation } from "./scripts/openlayers-proj4.js";
-
-// TODO:
-// Apply changes to json and crs
-// Restore setting the map view to EPSG:28992
-// Organize the different map functionality a little better
 
 async function main() {
   const map = initializeMap(
@@ -22,7 +19,6 @@ async function main() {
     "./json-examples/gemeenten_with_geometry.jsonfg"
   );
 
-  // addOSMTileLayer(map);
   await addPDOKTileLayer(map);
 
   // Add the example map to the global scope for debugging from the browser.
@@ -45,35 +41,43 @@ async function main() {
   // const geojsonResponse = await fetch("./json-examples/simple-shapes.geojson");
   const geojsonString = await geojsonResponse.text();
 
-  const jsonLayer = addJsonFGAsVectorLayer(
-    map,
-    "json-fg layer",
-    geojsonString,
-    "EPSG:4326"
+  const jsonLayer = addEmptyVectorLayer(map, "json-fg layer");
+  jsonLayer.setStyle(
+    getWithinRangeStylefunction(new Date("1900-01-01"), new Date("2100-01-01"))
   );
-  zoomToLayer(jsonLayer);
 
   const daterangeControl = new DateRangeControl({ layername: "json-fg layer" });
   map.addControl(daterangeControl);
   daterangeControl.updateFilteredFeatures();
 
-  async function onJsonChange(e) {
-    const newSource = readJsonFGFeatures(e.getValue(), "EPSG:4326");
+  function onJsonChange(e) {
+    const newSource = readJsonFGFeatures(e.getValue());
     jsonLayer.setSource(newSource);
+    zoomToLayer(jsonLayer);
   }
 
   function onCrsChange(e) {
-    const epsgInput = document.getElementById("epsg_input");
+    const crsInput = document.getElementById("crs_input");
 
-    addOpenLayersTransformation(epsgInput.value, e.getValue());
+    addOpenLayersTransformation(crsInput.value, e.getValue());
   }
 
-  initializeEditors(
+  const jsonfgEditor = createEditor(
+    document.getElementById("jsonfg-editor"),
     geojsonString,
+    onJsonChange
+  );
+  const crsEditor = createEditor(
+    document.getElementById("crs-editor"),
     "+proj=sterea +lat_0=52.1561605555556 +lon_0=5.38763888888889 +k=0.9999079 +x_0=155000 +y_0=463000 +ellps=bessel +towgs84=565.4171,50.3319,465.5524,1.9342,-1.6677,9.1019,4.0725 +units=m +no_defs +type=crs",
-    onJsonChange,
     onCrsChange
   );
+  window.jsonfgEditor = jsonfgEditor;
+  window.crsEditor = crsEditor;
+
+  // Cause an initial read on both the crs and json-fg inputs
+  onCrsChange(crsEditor);
+  onJsonChange(jsonfgEditor);
 }
 
 main();

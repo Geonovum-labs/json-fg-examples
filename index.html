@@ -33,16 +33,6 @@
     <link rel="stylesheet" href="index.css" />
     <link rel="stylesheet" href="slider.css" />
     <script type="module" src="index.js"></script>
-
-    <style>
-      .map-root {
-        width: 100%;
-        height: 400px;
-      }
-      #map-root:focus {
-        outline: #4a74a8 solid 0.15em;
-      }
-    </style>
   </head>
   <body>
     <div id="map-root" class="map-root" tabindex="0">
@@ -79,7 +69,7 @@
         </p>
         <code>
           ogr2ogr -f "JSONFG" /vsistdout/
-          "https://geonovum.github.io/test-ogc-json-fg/testdata/bgt/citygml/bgt_kunstwerkdeel.gml"
+          "https://github.com/Geonovum-labs/test-ogc-json-fg/tree/main/testdata/bgt/citygml/bgt_kunstwerkdeel.gml"
           > bgt_kunstwerkdeel.jsonfg
         </code>
       </div>
@@ -97,11 +87,12 @@
           Add the transformation string for the coordinate system of your json.
         </p>
         <p>
-          <label for="epsg_input">EPSG code:</label>
+          <!-- Calling it CRS to abstract away all variants of CRS -->
+          <label for="crs_input">CRS:</label>
           <input
             type="text"
-            id="epsg_input"
-            name="epsg_input"
+            id="crs_input"
+            name="crs_input"
             pattern="EPSG:[0-9]{3,5}"
             value="EPSG:28992"
           />
