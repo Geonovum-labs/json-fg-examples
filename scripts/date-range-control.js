@@ -25,8 +25,8 @@ export class DateRangeControl extends ol.control.Control {
     this.layername = options.layername;
 
     initializeSliderBehaviour({
-      sliderColor: "#eeeeee",
-      rangeColor: "#25daa5",
+      sliderColor: "var(--slider-color)",
+      rangeColor: "var(--line-color)",
       onFromSliderChange: this.onFromSliderChange.bind(this),
       onToSliderChange: this.onToSliderChange.bind(this),
     });
@@ -53,17 +53,13 @@ export class DateRangeControl extends ol.control.Control {
   }
 
   onFromSliderChange(newValue) {
-    // console.log("From slider updated: " + newValue);
     this.updateFilteredFeatures();
   }
 
   onToSliderChange(newValue) {
-    // console.log("To slider updated: " + newValue);
     this.updateFilteredFeatures();
   }
 }
-
-// function doRangesOverlap()
 
 /**
  * Returns a red or blue style function to show only features between the given dates.
@@ -88,8 +84,8 @@ export function getWithinRangeStylefunction(sliderFromDate, sliderToDate) {
     // Blue if date-range of feature overlaps with date-range of slider
     if (sliderFromDate <= featureToDate && sliderToDate >= featureFromDate)
       return blueStyles[feature.getGeometry().getType()];
-    // Red when outside given dates
-    else return new ol.style.Style(null); // redStyles[feature.getGeometry().getType()];
+    // Hidden when outside given dates
+    else return new ol.style.Style(null);
   };
 
   return styleFunction;

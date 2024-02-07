@@ -1,27 +1,40 @@
+html {
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 5px 5px 5px 5px;
+}
+
 .map-root {
+  box-sizing: border-box;
   width: 100%;
   height: 80vh;
 }
 
-#map-root:focus {
-  outline: #4a74a8 solid 0.15em;
+.map-root:focus {
+  outline: #3333dd solid 0.15em;
 }
 
 /* Anchor the title against the top center of the map. */
 .title-container {
   position: absolute;
-
+  width: max-content;
   left: 50%;
   transform: translateX(-50%);
   padding: 5px;
-
   font-family: "arial", "trebuchet ms", sans-serif;
   font-size: 24px;
   font-weight: 700;
 
   /* To make the title readable on top of the Map: */
   z-index: 2;
-  color: #5f5757;
+  color: #575757;
   text-shadow: 0.1em 0 rgb(239, 239, 239), 0 0.1em rgb(239, 239, 239),
     -0.1em 0 rgb(239, 239, 239), 0 -0.1em rgb(239, 239, 239);
 }

@@ -1,92 +1,102 @@
 /*
-  Based on this Medium article with small edits:
+  For more information on a dual range slider:
   https://medium.com/@predragdavidovic10/native-dual-range-slider-html-css-javascript-91e778134816
 */
+
+:root {
+  --slider-color: #ccc;
+  --line-color: #3333ff;
+}
 
 .date-range-control {
   position: relative;
   min-height: 12px;
-  margin-top: 6px;
+  margin-top: 10px;
 }
 
 .number-input-container {
   position: relative;
   display: flex;
+  flex-direction: row;
   justify-content: space-between;
   font-size: 24px;
-  color: #635a5a;
+}
+
+.number-input-area {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap-reverse;
+  gap: 10px;
+
+  &.right {
+    direction: rtl;
+  }
 }
 
 .input-label {
+  width: max-content;
+  position: relative;
+  display: block;
   font-family: "Chivo", sans-serif;
   font-weight: bold;
-  color: #5f5757;
+  color: #575757;
   text-shadow: 0.1em 0 rgb(239, 239, 239), 0 0.1em rgb(239, 239, 239),
     -0.1em 0 rgb(239, 239, 239), 0 -0.1em rgb(239, 239, 239);
+}
 
-  &.from {
-    text-align: left;
-  }
+input[type="range"] {
+  appearance: none;
+  height: 4px;
+  width: 100%;
+  position: absolute;
+  pointer-events: none;
+}
 
-  &.to {
-    text-align: right;
-  }
+input[type="range"]::-moz-range-thumb {
+  pointer-events: all;
+  width: 12px;
+  height: 32px;
+  background-color: #fff;
+  border-radius: 25%;
+  border: 1px solid #c6c6c6;
+  cursor: pointer;
 }
 
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   pointer-events: all;
-  width: 24px;
-  height: 24px;
+  width: 12px;
+  height: 32px;
   background-color: #fff;
-  border-radius: 50%;
-  box-shadow: 0 0 0 1px #c6c6c6;
-  cursor: pointer;
-}
-
-input[type="range"]::-moz-range-thumb {
-  pointer-events: all;
-  width: 24px;
-  height: 24px;
-  background-color: #fff;
-  border-radius: 50%;
-  box-shadow: 0 0 0 1px #c6c6c6;
+  border-radius: 25%;
+  border: 1px solid #c6c6c6;
   cursor: pointer;
 }
 
 input[type="range"]::-webkit-slider-thumb:hover {
-  background: #f7f7f7;
+  background: #eeeeee;
+}
+input[type="range"]::-moz-range-thumb:hover {
+  background: #eeeeee;
 }
 
 input[type="range"]::-webkit-slider-thumb:active {
-  box-shadow: inset 0 0 3px #387bbe, 0 0 9px #387bbe;
-  -webkit-box-shadow: inset 0 0 3px #387bbe, 0 0 9px #387bbe;
+  box-shadow: 0 0 9px #3333ff;
 }
-
-input[type="number"] {
-  color: #8a8383;
-  width: fit-content;
-  height: 30px;
-  font-size: 20px;
-  border: none;
+input[type="range"]::-moz-range-thumb:active {
+  box-shadow: 0 0 9px #3333ff;
 }
-
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
-  opacity: 1;
-}
-
-input[type="range"] {
-  -webkit-appearance: none;
-  appearance: none;
-  height: 4px;
-  width: 100%;
-  position: absolute;
-  background-color: #c6c6c6;
-  pointer-events: none;
+input[type="range"]:focus {
+  outline: none;
+  &::-webkit-slider-thumb {
+    box-shadow: 0 0 14px #3333ff;
+  }
+  &::-moz-range-thumb {
+    box-shadow: 0 0 9px #3333ff;
+  }
 }
 
 #range-slider-min {
-  height: 0;
+  background-color: rgba(0, 0, 0, 0);
   z-index: 1;
 }

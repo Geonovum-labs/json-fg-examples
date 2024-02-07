@@ -1,8 +1,6 @@
 /*
-  Based on this Medium article:
+  For more information on a dual range slider:
   https://medium.com/@predragdavidovic10/native-dual-range-slider-html-css-javascript-91e778134816
-
-  Edited code to be based on datetime inputs instead of just year inputs.
 */
 
 export function initializeSliderBehaviour({

@@ -4,6 +4,8 @@
     <meta charset="UTF-8" />
     <title>JSON-FG Example</title>
 
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
     <!-- Use OpenLayers without downloading anything (not recommended for production) -->
     <!-- The recommended way is to use a package bundler like webpack or vite. -->
     <script src="https://cdn.jsdelivr.net/npm/ol@v8.2.0/dist/ol.js"></script>
@@ -149,8 +151,7 @@
           />
           <span class="input-label from">From date</span>
         </div>
-        <div class="number-input right">
-          <span class="input-label to">To date</span>
+        <div class="number-input-area right">
           <input
             id="date-range-to-input"
             class="number-input to"
@@ -159,6 +160,7 @@
             min="2003-01-01"
             max="2020-01-01"
           />
+          <span class="input-label to">To date</span>
         </div>
       </div>
       <!-- 0 - 1 representing a range from the from date to the to date. -->
