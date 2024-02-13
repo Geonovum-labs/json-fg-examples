@@ -1,7 +1,7 @@
 // import { Control } from "ol/control.js";
 
-import { initializeSliderBehaviour } from "./date-range-functionality.js";
-import { blueStyles, redStyles } from "./openlayers-styles.js";
+import { initializeSliderBehaviour } from "../date-range-functionality.js";
+import { blueStyles, redStyles } from "../openlayers-styles.js";
 
 export class DateRangeControl extends ol.control.Control {
   fromDateInput;

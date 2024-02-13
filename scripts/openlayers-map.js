@@ -61,6 +61,7 @@ export function addEmptyVectorLayer(map, layername) {
   const vectorLayer = new ol.layer.Vector();
 
   vectorLayer.set("name", layername);
+  vectorLayer.set("title", layername);
   map.addLayer(vectorLayer);
 
   return vectorLayer;

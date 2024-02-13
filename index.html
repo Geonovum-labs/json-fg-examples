@@ -28,12 +28,23 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/theme/ayu-mirage.min.css"
     />
 
+    <!-- Basemap picker -->
+    <script src="https://unpkg.com/ol-layerswitcher@4.1.1"></script>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/ol-layerswitcher@4.1.1/dist/ol-layerswitcher.css"
+    />
+
     <!-- javascript and json linting -->
     <!-- https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/lint/javascript-lint.min.js -->
     <!-- https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/lint/json-lint.min.js -->
 
     <link rel="stylesheet" href="index.css" />
-    <link rel="stylesheet" href="slider.css" />
+    <link
+      rel="stylesheet"
+      href="scripts/custom-controls/date-range-control.css"
+    />
+    <link rel="stylesheet" href="scripts/custom-controls/zoom-control.css" />
     <script type="module" src="index.js"></script>
   </head>
   <body>
@@ -131,6 +142,10 @@
           +units=m +no_defs +type=crs");</code
         >
       </div>
+    </div>
+
+    <div class="zoom-button-container ol-unselectable ol-control">
+      <button id="zoom-button" class="zoom-button">Zoom to json</button>
     </div>
 
     <!--

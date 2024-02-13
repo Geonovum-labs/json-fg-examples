@@ -11,10 +11,20 @@ import { addOpenLayersTransformation } from "./openlayers-proj4.js";
 // URL https://service.pdok.nl//brt/achtergrondkaart/wmts/v2_0?request=GetCapabilities&service=WMTS
 // Source tileMatrixSet=EPSG:28992&crs=EPSG:28992&layers=pastel&styles=default&format=image/png&url=https://service.pdok.nl//brt/achtergrondkaart/wmts/v2_0?request%3DGetCapabilities%26service%3DWMTS
 
-export async function addPDOKTileLayer(map) {
+export function addOSMBaseLayer(map) {
+  const tileLayer = new ol.layer.Tile({
+    title: "OSM",
+    type: "base",
+    source: new ol.source.OSM(),
+  });
+
+  map.addLayer(tileLayer);
+  return tileLayer;
+}
+
+export async function addPDOKTileLayer(map, wmtsLayerId) {
   const wmtsServiceURL =
     "https://service.pdok.nl/brt/achtergrondkaart/wmts/v2_0?request=GetCapabilities&service=WMTS";
-  const wmtsLayerId = "grijs";
 
   // Define the transformation of the Dutch EPSG:28992 system.
   // Source: https://epsg.io/28992
@@ -69,6 +79,9 @@ export async function addPDOKTileLayer(map) {
   });
 
   tileLayer.set("name", "PDOK - BRT " + wmtsLayerId);
+  // Title and base are used by the LayerSwitcher control
+  tileLayer.set("title", "PDOK - BRT " + wmtsLayerId);
+  tileLayer.set("type", "base");
   map.addLayer(tileLayer);
   return tileLayer;
 }

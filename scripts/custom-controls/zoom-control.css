@@ -1,0 +1,11 @@
+.zoom-button-container {
+  top: 4.5em;
+  left: 0.5em;
+}
+
+button.zoom-button {
+  width: fit-content;
+  height: fit-content;
+  padding: 5px;
+  line-height: revert;
+}

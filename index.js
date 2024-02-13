@@ -8,21 +8,25 @@ import {
 import {
   DateRangeControl,
   getWithinRangeStylefunction,
-} from "./scripts/date-range-control.js";
+} from "./scripts/custom-controls/date-range-control.js";
 import { createEditor } from "./scripts/code-editor/codemirror.js";
-import { addPDOKTileLayer } from "./scripts/pdok-tilelayer.js";
+import { addPDOKTileLayer, addOSMBaseLayer } from "./scripts/basemaps.js";
 import { addOpenLayersTransformation } from "./scripts/openlayers-proj4.js";
+import { ZoomControl } from "./scripts/custom-controls/zoom-control.js";
 
 async function main() {
   const map = initializeMap(
     "map-root",
     "./json-examples/gemeenten_with_geometry.jsonfg"
   );
-
-  await addPDOKTileLayer(map);
-
-  // Add the example map to the global scope for debugging from the browser.
+  // For debugging from the browser.
   globalThis.map = map;
+
+  // Add two Dutch basemap options for the Dutch example.
+  await addPDOKTileLayer(map, "grijs");
+  await addPDOKTileLayer(map, "pastel");
+  // Add a global basemap for people who edit with data outside the Netherlands.
+  addOSMBaseLayer(map);
 
   addPopupToLayer(map);
 
@@ -45,6 +49,12 @@ async function main() {
   jsonLayer.setStyle(
     getWithinRangeStylefunction(new Date("1900-01-01"), new Date("2100-01-01"))
   );
+
+  const basemapControl = new ol.control.LayerSwitcher();
+  map.addControl(basemapControl);
+
+  const zoomControl = new ZoomControl({ layername: "json-fg layer" });
+  map.addControl(zoomControl);
 
   const daterangeControl = new DateRangeControl({ layername: "json-fg layer" });
   map.addControl(daterangeControl);
