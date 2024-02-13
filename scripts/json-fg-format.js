@@ -4,14 +4,15 @@
 import { readGeometryInternal } from "./geojson-format.js";
 
 /**
- * Feature format for reading and writing data in the JSON-FG format.
+ * Custom feature format for reading and writing data in the JSON-FG format.
+ *
+ * This custom format doesn't fully implement the JSON-FG standard as it was made for just this example.
+ * https://gdal.org/drivers/vector/jsonfg.html
  *
  * JSON-FG is a superset of GeoJSON.
  * However, the GeoJSON format only supports the coördinate system EPSG:4326.
  * Any projections given to the formats constructor are ignored.
  * https://gis.stackexchange.com/questions/442177/include-crs-information-in-geojson-features-created-by-openlayers-geojson-forma
- *
- * TODO: Add support for a custom projection.
  */
 export class JsonFG extends ol.format.GeoJSON {
   readFeaturesFromObject(object, options) {
@@ -39,11 +40,16 @@ export class JsonFG extends ol.format.GeoJSON {
     const feature = this.superReadFeatureFromObject(object, options);
 
     const featureTime = object.time;
-    if (featureTime.interval[0] === "..") {
-      featureTime.interval[0] = undefined;
-    }
-    if (featureTime.interval[1] === "..") {
-      featureTime.interval[1] = undefined;
+    if (featureTime) {
+      // Fix nullish value of interval
+      if (featureTime.interval) {
+        if (featureTime.interval[0] === "..") {
+          featureTime.interval[0] = undefined;
+        }
+        if (featureTime.interval[1] === "..") {
+          featureTime.interval[1] = undefined;
+        }
+      }
     }
     feature.set("time", featureTime);
 
