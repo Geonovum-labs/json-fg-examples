@@ -17,6 +17,8 @@ import {
 export class DateRangeControl extends ol.control.Control {
   fromDateInput;
   toDateInput;
+  fromSlider;
+  toSlider;
 
   layername;
   baseStyle;
@@ -44,111 +46,163 @@ export class DateRangeControl extends ol.control.Control {
 
     super(options);
 
-    this.fromDateInput = document.getElementById("date-range-from-input");
-    this.toDateInput = document.getElementById("date-range-to-input");
     this.layername = options.layername;
     this.baseStyle = options.baseStyle;
 
-    this.initializeSliderBehaviour({
-      onFromSliderChange: this.onFromSliderChange.bind(this),
-      onToSliderChange: this.onToSliderChange.bind(this),
-    });
+    this.initializeSliderBehaviour();
   }
 
-  initializeSliderBehaviour({ onFromSliderChange, onToSliderChange }) {
+  initializeSliderBehaviour() {
     const fromSlider = document.querySelector("#range-slider-min");
     const toSlider = document.querySelector("#range-slider-max");
-    const fromInput = document.querySelector("#date-range-from-input");
-    const toInput = document.querySelector("#date-range-to-input");
+    const fromInput = document.querySelector("#min-date-input");
+    const toInput = document.querySelector("#max-date-input");
+
+    this.fromSlider = fromSlider;
+    this.toSlider = toSlider;
+    this.fromDateInput = fromInput;
+    this.toDateInput = toInput;
 
     // Both sliders can move by moving the handle or by updating the number input.
     fromSlider.oninput = () => {
-      this.controlFromSlider(fromSlider, toSlider, fromInput, toInput);
-      onFromSliderChange(fromInput.value);
+      this.controlFromSlider();
+      this.updateFilteredFeatures();
     };
     fromInput.oninput = () => {
-      this.controlFromInput(fromInput, toInput, fromSlider, toSlider);
-      onFromSliderChange(fromInput.value);
+      this.controlFromInput();
+      this.updateFilteredFeatures();
     };
 
     toSlider.oninput = () => {
-      this.controlToSlider(fromSlider, toSlider, fromInput, toInput);
-      onToSliderChange(toInput.value);
+      this.controlToSlider();
+      this.updateFilteredFeatures();
     };
     toInput.oninput = () => {
-      this.controlToInput(fromInput, toInput, fromSlider, toSlider);
-      onToSliderChange(toInput.value);
+      this.controlToInput();
+      this.updateFilteredFeatures();
     };
 
     // Set initial positions of slider buttons:
-    this.controlFromInput(fromInput, toInput, fromSlider, toSlider);
-    this.controlToInput(fromInput, toInput, fromSlider, toSlider);
-    this.repaintSlider(fromSlider, toSlider, toSlider);
+    this.controlFromInput();
+    this.controlToInput();
+    this.repaintSlider();
   }
 
   onAddedToMap() {
-    const targetLayer = this.getTargetLayer();
-    targetLayer.setStyle(
-      getWithinRangeStylefunction(
-        this.baseStyle,
-        new Date("1900-01-01"),
-        new Date("2100-01-01")
-      )
-    );
-
     this.updateFilteredFeatures();
   }
 
-  controlFromInput(fromInput, toInput, fromSlider, toSlider) {
-    if (fromInput.value > toInput.value) {
-      fromSlider.value = normalizeDateInputValue(toInput);
-      fromInput.value = toInput.value;
-    } else {
-      fromSlider.value = normalizeDateInputValue(fromInput);
-    }
-    this.repaintSlider(fromSlider, toSlider, toSlider);
+  /**
+   * Call this after adding features with a time property possibly outside the current min-max.
+   */
+  recalculateMinMax() {
+    const targetLayer = this.getTargetLayer();
+    const source = targetLayer.getSource();
+    const features = source.getFeatures();
+
+    const startDates = features.map((f) => {
+      const time = f.get("time");
+
+      if (time && time.interval && time.interval[0])
+        return new Date(time.interval[0]);
+      else return null;
+    });
+
+    const endDates = features.map((f) => {
+      const time = f.get("time");
+
+      if (time && time.interval && time.interval[1])
+        return new Date(time.interval[1]);
+      else return null;
+    });
+
+    // Compare dates using math.min since it handles nullish values nicely.
+    let earliestDate = new Date(Math.min(...startDates));
+    let latestDate = new Date(Math.max(...endDates));
+
+    // Set a default if no features had a start / end time.
+    earliestDate = earliestDate || new Date("1700-01-01T00:00:00Z");
+    latestDate = latestDate || new Date("2300-01-01T00:00:00Z");
+
+    // Apply the new min-max on the input Elements
+    // Format: "2003-01-01"
+    this.fromDateInput.min = dateToDateInputString(earliestDate);
+    this.fromDateInput.max = dateToDateInputString(latestDate);
+    this.toDateInput.min = dateToDateInputString(earliestDate);
+    this.toDateInput.max = dateToDateInputString(latestDate);
+    // No need to update the slider input elements, their min-max is always 0-1;
+
+    // Also reset the current date-range to min-max so it shows all features.
+    this.fromDateInput.value = this.fromDateInput.min;
+    this.toDateInput.value = this.toDateInput.max;
+
+    // Reset initial positions of slider buttons:
+    this.controlFromInput();
+    this.controlToInput();
+    this.repaintSlider();
+    // Apply the new min-max filter on the features.
+    this.updateFilteredFeatures();
   }
 
-  controlToInput(fromInput, toInput, fromSlider, toSlider) {
-    if (fromInput.value <= toInput.value) {
-      toSlider.value = normalizeDateInputValue(toInput);
-      toInput.value = toInput.value;
+  controlFromInput() {
+    if (this.fromDateInput.value > this.toDateInput.value) {
+      this.fromSlider.value = normalizeDateInputValue(this.toDateInput);
+      this.fromDateInput.value = this.toDateInput.value;
     } else {
-      toInput.value = fromInput.value;
+      this.fromSlider.value = normalizeDateInputValue(this.fromDateInput);
     }
-    this.repaintSlider(fromSlider, toSlider, toSlider);
+    this.repaintSlider();
   }
 
-  controlFromSlider(fromSlider, toSlider, fromInput, toInput) {
-    if (fromSlider.value > toSlider.value) {
-      const toDate = lerpDateInputMinMax(toSlider.value, toInput);
-
-      fromSlider.value = toSlider.value;
-      fromInput.value = dateToDateInputString(toDate);
+  controlToInput() {
+    if (this.fromDateInput.value <= this.toDateInput.value) {
+      this.toSlider.value = normalizeDateInputValue(this.toDateInput);
+      this.toDateInput.value = this.toDateInput.value;
     } else {
-      const fromDate = lerpDateInputMinMax(fromSlider.value, fromInput);
-      fromInput.value = dateToDateInputString(fromDate);
+      this.toDateInput.value = this.fromDateInput.value;
     }
-
-    this.repaintSlider(fromSlider, toSlider, toSlider);
+    this.repaintSlider();
   }
 
-  controlToSlider(fromSlider, toSlider, fromInput, toInput) {
-    if (fromSlider.value <= toSlider.value) {
-      const toDate = lerpDateInputMinMax(toSlider.value, toInput);
+  controlFromSlider() {
+    if (this.fromSlider.value > this.toSlider.value) {
+      const toDate = lerpDateInputMinMax(this.toSlider.value, this.toDateInput);
 
-      toInput.value = dateToDateInputString(toDate);
+      this.fromSlider.value = this.toSlider.value;
+      this.fromDateInput.value = dateToDateInputString(toDate);
     } else {
-      const fromDate = lerpDateInputMinMax(fromSlider.value, fromInput);
-
-      toSlider.value = fromSlider.value;
-      toInput.value = dateToDateInputString(fromDate);
+      const fromDate = lerpDateInputMinMax(
+        this.fromSlider.value,
+        this.fromDateInput
+      );
+      this.fromDateInput.value = dateToDateInputString(fromDate);
     }
 
-    this.repaintSlider(fromSlider, toSlider, toSlider);
+    this.repaintSlider();
   }
 
-  repaintSlider(from, to, controlSlider) {
+  controlToSlider() {
+    if (this.fromSlider.value <= this.toSlider.value) {
+      const toDate = lerpDateInputMinMax(this.toSlider.value, this.toDateInput);
+
+      this.toDateInput.value = dateToDateInputString(toDate);
+    } else {
+      const fromDate = lerpDateInputMinMax(
+        this.fromSlider.value,
+        this.fromDateInput
+      );
+
+      this.toSlider.value = this.fromSlider.value;
+      this.toDateInput.value = dateToDateInputString(fromDate);
+    }
+
+    this.repaintSlider();
+  }
+
+  repaintSlider() {
+    const from = this.fromSlider;
+    const to = this.toSlider;
+
     const rangeDistance = to.max - to.min;
     const fromPosition = from.value - to.min;
     const toPosition = to.value - to.min;
@@ -156,7 +210,7 @@ export class DateRangeControl extends ol.control.Control {
     const sliderBgColor = "var(--slider-color)";
     const rangeColor = "var(--line-color)";
 
-    controlSlider.style.background = `linear-gradient(
+    this.toSlider.style.background = `linear-gradient(
       to right,
       ${sliderBgColor} 0%,
       ${sliderBgColor} ${(fromPosition / rangeDistance) * 100}%,
@@ -190,14 +244,6 @@ export class DateRangeControl extends ol.control.Control {
       .getAllLayers()
       .filter((layer) => layer.get("name") === this.layername)[0];
     return layer;
-  }
-
-  onFromSliderChange(newValue) {
-    this.updateFilteredFeatures();
-  }
-
-  onToSliderChange(newValue) {
-    this.updateFilteredFeatures();
   }
 }
 

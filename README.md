@@ -49,11 +49,3 @@ https://openlayers.org/en/latest/examples/filter-points-webgl.html
 Implemented a JSON-FG format. It is an override of the GeoJSON format.  
 It add functionality for the global coordRefSys attribute and the "time" and "place" feature attributes.  
 Implemented a small fix for undefined timestamps. It seems like GDAL generates these values as ".." which is not falsy.
-
-## TODO
-
-Detect start and end date from pasted json
-
-Testbestand genereren met ogr2ogr waarin time wel wordt ingevuld (Remapping van kolomnaam naar time_start en time_end?)
-After that check if null is mapped to ".." by ogr2ogr.
--sql "select cast (creationDate as date) as time, \"gml_id\",lokaalID,creationDate,\"LV-publicatiedatum\",tijdstipregistratie,eindRegistratie,bronhouder,relatieveHoogteligging,\"bgt-status\",\"plus-status\",function,\"plus-type\",geometrie2dBak from BAK"

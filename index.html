@@ -170,25 +170,12 @@
     >
       <div class="number-input-container">
         <div class="number-input-area left">
-          <input
-            id="date-range-from-input"
-            class="number-input from"
-            type="date"
-            value="2003-01-01"
-            min="2003-01-01"
-            max="2020-01-01"
-          />
+          <!-- min, max and initial value are calculated from the data -->
+          <input id="min-date-input" class="number-input from" type="date" />
           <span class="input-label from">From date</span>
         </div>
         <div class="number-input-area right">
-          <input
-            id="date-range-to-input"
-            class="number-input to"
-            type="date"
-            value="2004-01-01"
-            min="2003-01-01"
-            max="2020-01-01"
-          />
+          <input id="max-date-input" class="number-input to" type="date" />
           <span class="input-label to">To date</span>
         </div>
       </div>

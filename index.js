@@ -63,6 +63,7 @@ async function main() {
     const newSource = readJsonFGFeatures(e.getValue());
     jsonLayer.setSource(newSource);
     zoomToLayer(jsonLayer);
+    daterangeControl.recalculateMinMax();
   }
 
   function onCrsChange(e) {
