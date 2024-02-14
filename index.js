@@ -5,10 +5,7 @@ import {
   zoomToLayer,
   readJsonFGFeatures,
 } from "./scripts/openlayers-map.js";
-import {
-  DateRangeControl,
-  getWithinRangeStylefunction,
-} from "./scripts/custom-controls/date-range-control.js";
+import { DateRangeControl } from "./scripts/custom-controls/date-range-control.js";
 import { createEditor } from "./scripts/code-editor/codemirror.js";
 import { addPDOKTileLayer, addOSMBaseLayer } from "./scripts/basemaps.js";
 import { addOpenLayersTransformation } from "./scripts/openlayers-proj4.js";
@@ -46,9 +43,6 @@ async function main() {
   const geojsonString = await geojsonResponse.text();
 
   const jsonLayer = addEmptyVectorLayer(map, "json-fg layer");
-  jsonLayer.setStyle(
-    getWithinRangeStylefunction(new Date("1900-01-01"), new Date("2100-01-01"))
-  );
 
   const basemapControl = new ol.control.LayerSwitcher();
   map.addControl(basemapControl);
@@ -58,7 +52,7 @@ async function main() {
 
   const daterangeControl = new DateRangeControl({ layername: "json-fg layer" });
   map.addControl(daterangeControl);
-  daterangeControl.updateFilteredFeatures();
+  daterangeControl.onAddedToMap();
 
   function onJsonChange(e) {
     const newSource = readJsonFGFeatures(e.getValue());
