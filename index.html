@@ -57,8 +57,11 @@
       <div class="editor-pane">
         <p class="subtitle">Introduction</p>
         <p>
-          This is an example of how json-fg data can be shown in an Openlayers
+          This is an example of how JSON-FG data can be shown in an Openlayers
           map. It shows the shape of Dutch municipality borders over time.
+          <br />
+          The website is built as vanilla javascript, without a compilation
+          step. This makes it easier for beginner programmers to get it running.
         </p>
         <p>
           Repository:<br />
@@ -67,29 +70,37 @@
           >
         </p>
         <p>
-          JSON-FG extends GeoJSON with support for other coordinate systems than
-          WGS84 and adds support for time.
+          Notes:<br />
+          Openlayers has Geojson support but that is not enough for the time and
+          coordinate system additions of JSON-FG. To make this possible a custom
+          JSON-FG format is included that partially implements JSON-FG. <br />
+          The format only supports time.interval from JSON-FG. If it uses
+          time.date or time.timestamp the timeslider does nothing.
         </p>
         <p>
-          GDAL docs on the JSON-FG standard:
+          GDAL docs on the JSON-FG standard: <br />
           <a href="https://gdal.org/drivers/vector/jsonfg.html" target="_blank"
             >https://gdal.org/drivers/vector/jsonfg.html</a
           >.
         </p>
+
+        <p class="subtitle">Create JSON-FG</p>
         <p>
           Run the following gdal command to convert your gml to json-fg. This
           requires gdal >3.8
         </p>
+        <code> ogr2ogr -f "JSONFG" output.jsonfg input.gml </code>
+        <p>For me it looked like this:</p>
         <code>
-          ogr2ogr -f "JSONFG" /vsistdout/
-          "https://github.com/Geonovum-labs/test-ogc-json-fg/tree/main/testdata/bgt/citygml/bgt_kunstwerkdeel.gml"
-          > bgt_kunstwerkdeel.jsonfg
+          "C:\Program Files\QGIS 3.34.3\bin\ogr2ogr.exe" -f "JSONFG"
+          ./bgt_kunstwerkdeel.jsonfg
+          https://raw.githubusercontent.com/Geonovum-labs/test-ogc-json-fg/main/testdata/bgt/citygml/bgt_kunstwerkdeel.gml
         </code>
       </div>
 
       <div class="editor-pane">
         <p class="subtitle">JSON-FG editor</p>
-        <p>Edit your json-fg here</p>
+        <p>Edit your json-fg here, the layer is automatically updated.</p>
 
         <div id="jsonfg-editor" class="editor"></div>
       </div>
