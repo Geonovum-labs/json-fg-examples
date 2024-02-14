@@ -59,6 +59,11 @@ export function getCollectionStyle(
   });
 }
 
+/** Slightly slow, but general purpose style function. */
+export const blueStyleFunction = (feature) => {
+  return blueStyles[feature.getGeometry().getType()];
+};
+
 export const blueStyles = {
   Point: getPointStyle("blue", "rgba(0, 0, 255, 0.1)"),
   LineString: getLineStyle("blue"),

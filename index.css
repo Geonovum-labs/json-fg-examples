@@ -68,8 +68,6 @@ input:invalid {
 /* Anchor the date slider against the bottom center of screen. */
 .date-range-container {
   position: absolute;
-  display: flex;
-  flex-direction: column;
   bottom: 0px;
   left: 50%;
   transform: translateX(-50%);

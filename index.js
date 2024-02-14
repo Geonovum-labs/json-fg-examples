@@ -10,6 +10,7 @@ import { createEditor } from "./scripts/code-editor/codemirror.js";
 import { addPDOKTileLayer, addOSMBaseLayer } from "./scripts/basemaps.js";
 import { addOpenLayersTransformation } from "./scripts/openlayers-proj4.js";
 import { ZoomControl } from "./scripts/custom-controls/zoom-control.js";
+import { blueStyleFunction, blueStyles } from "./scripts/openlayers-styles.js";
 
 async function main() {
   const map = initializeMap(
@@ -43,6 +44,7 @@ async function main() {
   const geojsonString = await geojsonResponse.text();
 
   const jsonLayer = addEmptyVectorLayer(map, "json-fg layer");
+  jsonLayer.setStyle(blueStyleFunction);
 
   const basemapControl = new ol.control.LayerSwitcher();
   map.addControl(basemapControl);
@@ -50,7 +52,10 @@ async function main() {
   const zoomControl = new ZoomControl({ layername: "json-fg layer" });
   map.addControl(zoomControl);
 
-  const daterangeControl = new DateRangeControl({ layername: "json-fg layer" });
+  const daterangeControl = new DateRangeControl({
+    layername: "json-fg layer",
+    baseStyle: blueStyleFunction,
+  });
   map.addControl(daterangeControl);
   daterangeControl.onAddedToMap();
 

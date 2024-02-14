@@ -9,7 +9,6 @@ import {
   lerpDateInputMinMax,
   normalizeDateInputValue,
 } from "./date-range-functionality.js";
-import { blueStyles, redStyles } from "../openlayers-styles.js";
 
 /**
  * Call thisControl.onAddedToMap() after adding this control to the map.
@@ -20,38 +19,40 @@ export class DateRangeControl extends ol.control.Control {
   toDateInput;
 
   layername;
+  baseStyle;
 
-  constructor(opt_options) {
-    const options = opt_options || {};
+  /**
+   * options:
+   * * element (inherited) HTMLElement | undefined
+   *   * The element is the control's container element. This only needs to be specified if you're developing a custom control.
+   *   * By default this is overridden with the element with id "date-range-container"
+   * * render (inherited) function | undefined
+   *   * Function called when the control should be re-rendered. This is called in a requestAnimationFrame callback.
+   * * target (inherited) HTMLElement | string | undefined
+   *   * Specify a target if you want the control to be rendered outside of the map's viewport.
+   * * layername
+   * * baseStyle
+   */
+  constructor(options) {
+    options = options || {};
+    if (!options.element) {
+      const dateRangeContainer = document.getElementById(
+        "date-range-container"
+      );
+      options.element = dateRangeContainer;
+    }
 
-    const dateRangeContainer = document.getElementsByClassName(
-      "date-range-container"
-    )[0];
-    super({
-      element: dateRangeContainer,
-      target: options.target,
-    });
+    super(options);
 
     this.fromDateInput = document.getElementById("date-range-from-input");
     this.toDateInput = document.getElementById("date-range-to-input");
     this.layername = options.layername;
+    this.baseStyle = options.baseStyle;
 
     this.initializeSliderBehaviour({
       onFromSliderChange: this.onFromSliderChange.bind(this),
       onToSliderChange: this.onToSliderChange.bind(this),
     });
-  }
-
-  onAddedToMap() {
-    const targetLayer = this.getLayerByName(this.layername);
-    targetLayer.setStyle(
-      getWithinRangeStylefunction(
-        new Date("1900-01-01"),
-        new Date("2100-01-01")
-      )
-    );
-
-    this.updateFilteredFeatures();
   }
 
   initializeSliderBehaviour({ onFromSliderChange, onToSliderChange }) {
@@ -83,6 +84,19 @@ export class DateRangeControl extends ol.control.Control {
     this.controlFromInput(fromInput, toInput, fromSlider, toSlider);
     this.controlToInput(fromInput, toInput, fromSlider, toSlider);
     this.repaintSlider(fromSlider, toSlider, toSlider);
+  }
+
+  onAddedToMap() {
+    const targetLayer = this.getTargetLayer();
+    targetLayer.setStyle(
+      getWithinRangeStylefunction(
+        this.baseStyle,
+        new Date("1900-01-01"),
+        new Date("2100-01-01")
+      )
+    );
+
+    this.updateFilteredFeatures();
   }
 
   controlFromInput(fromInput, toInput, fromSlider, toSlider) {
@@ -153,7 +167,7 @@ export class DateRangeControl extends ol.control.Control {
   }
 
   updateFilteredFeatures() {
-    const layer = this.getLayerByName(this.layername);
+    const layer = this.getTargetLayer();
 
     if (!layer) {
       console.log(
@@ -164,13 +178,14 @@ export class DateRangeControl extends ol.control.Control {
 
     layer.setStyle(
       getWithinRangeStylefunction(
+        this.baseStyle,
         new Date(this.fromDateInput.value),
         new Date(this.toDateInput.value)
       )
     );
   }
 
-  getLayerByName(name) {
+  getTargetLayer() {
     const layer = this.getMap()
       .getAllLayers()
       .filter((layer) => layer.get("name") === this.layername)[0];
@@ -187,28 +202,40 @@ export class DateRangeControl extends ol.control.Control {
 }
 
 /**
- * Returns a red or blue style function to show only features between the given dates.
+ * Returns a style function based on the given baseStyle.
+ * * If within range, features are styled with the baseStyle
+ * * If outside range, features are invisible
  *
- * @param {Date} sliderFromDate
- * @param {Date} sliderToDate
+ * Features styled this way need a json-fg time property:
+ * ```
+ * time: {
+ *  interval: [minDate: Date, maxDate: Date]
+ * }
+ * ```
+ *
+ * @param {ol.style.Style.styleFunction} baseStyle
+ * @param {Date} minDate
+ * @param {Date} maxDate
+ * @returns {ol.style.Style.styleFunction} styleFunction
  */
-export function getWithinRangeStylefunction(sliderFromDate, sliderToDate) {
+function getWithinRangeStylefunction(baseStyle, minDate, maxDate) {
   const styleFunction = (feature) => {
     const timeProp = feature.get("time");
     // Use old style if interval failed.
     if (!timeProp) {
       console.log("Using old style");
-      return blueStyles[feature.getGeometry().getType()];
+      return baseStyle(feature);
     }
 
     // The interval time strings are interpreted as UTC when they have a format like: "2002-12-31T23:00:00Z".
     // Sometimes the interval values are ".." which I read as undefined in the custom Format.
-    const featureFromDate = new Date(timeProp.interval[0] || sliderFromDate);
-    const featureToDate = new Date(timeProp.interval[1] || sliderToDate);
+    const featureFromDate = new Date(timeProp.interval[0] || minDate);
+    const featureToDate = new Date(timeProp.interval[1] || maxDate);
 
     // Blue if date-range of feature overlaps with date-range of slider
-    if (sliderFromDate <= featureToDate && sliderToDate >= featureFromDate)
-      return blueStyles[feature.getGeometry().getType()];
+    if (minDate <= featureToDate && maxDate >= featureFromDate) {
+      return baseStyle(feature);
+    }
     // Hidden when outside given dates
     else return new ol.style.Style(null);
   };
