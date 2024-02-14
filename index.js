@@ -21,10 +21,10 @@ async function main() {
   globalThis.map = map;
 
   // Add two Dutch basemap options for the Dutch example.
-  await addPDOKTileLayer(map, "grijs");
-  await addPDOKTileLayer(map, "pastel");
+  await addPDOKTileLayer(map, "grijs", true);
+  await addPDOKTileLayer(map, "pastel", false);
   // Add a global basemap for people who edit with data outside the Netherlands.
-  addOSMBaseLayer(map);
+  addOSMBaseLayer(map, false);
 
   addPopupToLayer(map);
 

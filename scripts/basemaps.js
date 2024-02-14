@@ -11,18 +11,19 @@ import { addOpenLayersTransformation } from "./openlayers-proj4.js";
 // URL https://service.pdok.nl//brt/achtergrondkaart/wmts/v2_0?request=GetCapabilities&service=WMTS
 // Source tileMatrixSet=EPSG:28992&crs=EPSG:28992&layers=pastel&styles=default&format=image/png&url=https://service.pdok.nl//brt/achtergrondkaart/wmts/v2_0?request%3DGetCapabilities%26service%3DWMTS
 
-export function addOSMBaseLayer(map) {
+export function addOSMBaseLayer(map, startVisible = true) {
   const tileLayer = new ol.layer.Tile({
     title: "OSM",
     type: "base",
     source: new ol.source.OSM(),
+    visible: startVisible,
   });
 
   map.addLayer(tileLayer);
   return tileLayer;
 }
 
-export async function addPDOKTileLayer(map, wmtsLayerId) {
+export async function addPDOKTileLayer(map, wmtsLayerId, startVisible = true) {
   const wmtsServiceURL =
     "https://service.pdok.nl/brt/achtergrondkaart/wmts/v2_0?request=GetCapabilities&service=WMTS";
 
@@ -76,6 +77,7 @@ export async function addPDOKTileLayer(map, wmtsLayerId) {
 
   const tileLayer = new ol.layer.Tile({
     source: new ol.source.WMTS(wmtsOptions),
+    visible: startVisible,
   });
 
   tileLayer.set("name", "PDOK - BRT " + wmtsLayerId);
