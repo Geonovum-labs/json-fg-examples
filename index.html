@@ -70,12 +70,14 @@
           >
         </p>
         <p>
-          Notes:<br />
-          Openlayers has Geojson support but that is not enough for the time and
-          coordinate system additions of JSON-FG. To make this possible a custom
-          JSON-FG format is included that partially implements JSON-FG. <br />
-          The format only supports time.interval from JSON-FG. If it uses
-          time.date or time.timestamp the timeslider does nothing.
+          Notes:</p>
+        <ul>
+          <li>Openlayers has Geojson support but that is not enough for the time and
+            coordinate system additions of JSON-FG. To make this possible a custom
+            JSON-FG format is included that partially implements JSON-FG.</li>
+            <li>The format only supports <code>time.interval</code>> from JSON-FG. If the data in the JSON-FG editor on the right uses
+              <code>time.date</code> or <code>time.timestamp</code>, the timeslider does not function.</li>
+        </ul>
         </p>
         <p>
           GDAL docs on the JSON-FG standard: <br />
@@ -86,8 +88,8 @@
 
         <p class="subtitle">Create JSON-FG</p>
         <p>
-          Run the following gdal command to convert your gml to json-fg. This
-          requires gdal >3.8
+          Run the following GDAL command to convert your GML to JSON-FG. This
+          requires GDAL >3.8
         </p>
         <code> ogr2ogr -f "JSONFG" output.jsonfg input.gml </code>
         <p>For me it looked like this:</p>
@@ -96,11 +98,12 @@
           ./bgt_kunstwerkdeel.jsonfg
           https://raw.githubusercontent.com/Geonovum-labs/test-ogc-json-fg/main/testdata/bgt/citygml/bgt_kunstwerkdeel.gml
         </code>
+        <p>It is also possible to use another input format, for example GeoPackage.</p>
       </div>
 
       <div class="editor-pane">
         <p class="subtitle">JSON-FG editor</p>
-        <p>Edit your json-fg here, the layer is automatically updated.</p>
+        <p>Edit your JSON-FG here, the layer is automatically updated.</p>
 
         <div id="jsonfg-editor" class="editor"></div>
       </div>
@@ -108,7 +111,7 @@
       <div class="editor-pane">
         <p class="subtitle">Transformation editor</p>
         <p>
-          Add the transformation string for the coordinate system of your json.
+          Add the transformation string for the coordinate system of your JSON.
         </p>
         <p>
           <!-- Calling it CRS to abstract away all variants of CRS -->

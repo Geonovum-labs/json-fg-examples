@@ -47,5 +47,5 @@ Implemented filtering features by date based on this Openlayers example
 https://openlayers.org/en/latest/examples/filter-points-webgl.html
 
 Implemented a JSON-FG format. It is an override of the GeoJSON format.  
-It add functionality for the global coordRefSys attribute and the "time" and "place" feature attributes.  
-Implemented a small fix for undefined timestamps. It seems like GDAL generates these values as ".." which is not falsy.
+It adds functionality for the global `coordRefSys` attribute and the "time" and "place" feature attributes.  
+Implemented a small fix for undefined timestamps. GDAL generates these values as ".." which is not falsy. In JSON-FG, the unbounded end of an interval is represented by a double-dot string (".."), see [JSON-FG spec 7.7.4 Intervals](https://docs.ogc.org/DRAFTS/21-045.html#_intervals). 
